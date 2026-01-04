@@ -1,0 +1,22 @@
+name: Weekly Strava Report
+
+on:
+  workflow_dispatch:   # <-- dit maakt de "Run workflow" knop
+  schedule:
+    - cron: "0 6 * * 1"  # elke maandag 06:00 UTC (~07:00 NL wintertijd)
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python weekly.py
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+          TZ_NAME: Europe/Amsterdam
